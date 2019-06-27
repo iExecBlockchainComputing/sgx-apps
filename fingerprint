@@ -1,0 +1,1 @@
+Fingerprint: 1360a4a93388571e4936d9673acfd45fe8c613ce6ac2fd6e12d8b9dc8b2f0d19|5e614b683114a43a37f2c4e2ba877f16|$(docker run --entrypoint="python" --device=/dev/isgx -e SCONE_HEAP=2G -e SCONE_HASH=1 -e SCONE_ALPINE=1 $IMAGE_NAME)
