@@ -15,8 +15,8 @@ scone fspf addr conf/fspf.pb /usr/bin --authenticated --kernel /usr/bin; \
 scone fspf addf conf/fspf.pb /usr/bin /usr/bin;\
 scone fspf addr conf/fspf.pb /signer --authenticated --kernel /signer; \
 scone fspf addf conf/fspf.pb /signer /signer;\
-scone fspf addr conf/fspf.pb /python --authenticated --kernel /python; \
-scone fspf addf conf/fspf.pb /python /python;\
+scone fspf addr conf/fspf.pb /app --authenticated --kernel /app; \
+scone fspf addf conf/fspf.pb /app /app;\
 scone fspf encrypt ./conf/fspf.pb > /conf/keytag;"
 
 
