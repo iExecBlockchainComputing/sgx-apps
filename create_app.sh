@@ -4,9 +4,9 @@ mkdir conf
 
 docker build -f Dockerfile -t $IMAGE_NAME .
 
-MRENCLAVE='$(docker run --entrypoint="python" --device=/dev/isgx -e SCONE_HEAP=2G -e SCONE_HASH=1 -e SCONE_ALPINE=1 $IMAGE_NAME)'
+MRENCLAVE=$(docker run --device=/dev/isgx -e SCONE_HEAP=1G -e SCONE_HASH=1 -e SCONE_ALPINE=1 nexus.iex.ec/python_scone python)
 
-docker run  -v "$PWD/python:/python" -v "$PWD/python/python3.6:/usr/lib/python3.6" -v "$PWD/conf:/conf" sconecuratedimages/iexec:crosscompilers sh -c \
+docker run  -v "$PWD/python:/python" -v "$PWD/python/python3.6:/usr/lib/python3.6" -v "$PWD/conf:/conf" nexus.iex.ec/scone-cli sh -c \
 "scone fspf create conf/fspf.pb; \
 scone fspf addr conf/fspf.pb /  --not-protected --kernel /; \
 scone fspf addr conf/fspf.pb /usr/lib/python3.6 --authenticated --kernel /usr/lib/python3.6; \
@@ -24,7 +24,7 @@ FSPF_TAG=$(cat conf/keytag | awk '{print $9}')
 FSPF_KEY=$(cat conf/keytag | awk '{print $11}')
 
 FINGERPRINT="$FSPF_KEY|$FSPF_TAG|$MRENCLAVE"
-
+echo $FINGERPRINT
 envsubst < DockerAddFspfTmp > DockerAddFspf
 
 docker build -f DockerAddFspf -t $IMAGE_NAME .
