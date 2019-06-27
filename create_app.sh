@@ -2,7 +2,7 @@
 export IMAGE_NAME=$1
 mkdir conf
 
-docker build -f Dockerfile -t $IMAGE_NAME .
+docker build -f Dockerfile2 -t $IMAGE_NAME .
 
 MRENCLAVE=$(docker run --device=/dev/isgx -e SCONE_HEAP=1G -e SCONE_HASH=1 -e SCONE_ALPINE=1 nexus.iex.ec/python_scone python)
 
