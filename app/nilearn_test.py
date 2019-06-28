@@ -26,7 +26,7 @@ from nilearn._utils.compat import _basestring
 from sklearn.datasets.base import Bunch
 
 def load_atlas_smith():
-    dataset_name = '/iexec_in/smith_2009'
+    dataset_name = '/iexec_in/data'
 
     files = [
           #  'rsn20.nii.gz',
