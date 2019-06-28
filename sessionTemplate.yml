@@ -1,0 +1,20 @@
+name: $NAME
+digest: create
+
+services:
+   - name: app
+     image_name: image
+     mrenclaves: [$MRENCLAVE]
+     tags: [demo]
+     pwd: /
+     command: python /app/nilearn_test.py sgx
+     fspf_path: /fspf.pb
+     fspf_key: $FSPF_KEY
+     fspf_tag: $FSPF_TAG
+     env:
+             ENV=world
+             TOTO=tata
+images:
+   - name: image
+     mrenclaves: [$MRENCLAVE]
+     tags: [demo]
