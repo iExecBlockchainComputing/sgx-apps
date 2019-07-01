@@ -42,8 +42,8 @@ echo "Fingerprint: $FINGERPRINT" | tee fingerprint.txt
 
 # copy fspf.pb into app image
 case "$(uname -s)" in
-    Linux*)     sed -i "s/@IMAGE@/$IMAGE_NAME/" app-second-build.dockerfile;;
-    Darwin*)    sed -e "s/@IMAGE@/$IMAGE_NAME/" -i "" app-second-build.dockerfile;;
+    Linux*)     sed "s@IMAGE_NAME@$IMAGE_NAME@" app-second-build-template.dockerfile > app-second-build.dockerfile;;
+    Darwin*)    sed -e "s@IMAGE_NAME@$IMAGE_NAME@" app-second-build-template.dockerfile > app-second-build.dockerfile;;
 esac
 
 docker build -f app-second-build.dockerfile -t $IMAGE_NAME .
