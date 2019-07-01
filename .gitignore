@@ -2,3 +2,6 @@ iexec.json
 chain.json
 tee
 .tee-secrets
+fingerprint.txt
+app-second-build.dockerfile
+
