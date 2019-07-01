@@ -1,2 +1,2 @@
-FROM $IMAGE_NAME
+FROM @IMAGE@
 COPY conf/fspf.pb fspf.pb
