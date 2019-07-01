@@ -1,4 +1,6 @@
 iexec.json
 chain.json
 fingerprint.txt
-app-second-build.dockerfile
+second-build.dockerfile
+python
+conf

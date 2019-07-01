@@ -1,10 +1,41 @@
 #!/bin/bash
 
+# ./create-app.sh --app-name=<name:tag> --app-folder=<path> --dockerfile=dockerfile
 
-IMAGE_NAME=$1
+#Check input params
+for i in "$@"
+do
+case $i in
+    --app-name=*)
+    APP_NAME="${i#*=}"
+    shift
+    ;;
+    --app-folder=*)
+    APP_FOLDER="${i#*=}"
+    shift
+    ;;
+    --dockerfile=*)
+    DOCKERFILE="${i#*=}"
+    shift
+    ;;
+esac
+done
+
+## REQUIRED
+if [[ -z $APP_NAME ]]; then
+    echo "--app-name=<image name> required"
+    exit
+fi
+if [[ -z $APP_FOLDER ]]; then
+    echo "--app-folder=<path> required"
+    exit
+fi
+if [[ -z $DOCKERFILE ]]; then
+    DOCKERFILE="dockerfile"
+fi
 
 # build app with required dependencies and libs
-docker build -f app-first-build.dockerfile -t $IMAGE_NAME .
+docker build -f "$APP_FOLDER/$DOCKERFILE" -t $APP_NAME ./$APP_FOLDER
 
 # get mrenclave of python interpreter
 MRENCLAVE=$(docker run \
@@ -14,9 +45,10 @@ MRENCLAVE=$(docker run \
                 -e SCONE_ALPINE=1 \
                 nexus.iex.ec/python_scone python)
 
+docker run --rm --entrypoint="" -v $PWD/python:/python $APP_NAME sh -c "cp -r /usr/lib/python3.6 /python;"
+
 # create fspf.pb
 docker run -e SCONE_MODE=sim \
-    -v $PWD/python:/python \
     -v $PWD/app:/app \
     -v $PWD/signer:/signer \
     -v $PWD/python/python3.6:/usr/lib/python3.6 \
@@ -34,19 +66,23 @@ scone fspf addr conf/fspf.pb /app --authenticated --kernel /app; \
 scone fspf addf conf/fspf.pb /app /app;\
 scone fspf encrypt ./conf/fspf.pb > /conf/keytag;"
 
+rm -rf python
+
 # get fingerprint
 FSPF_TAG=$(cat conf/keytag | awk '{print $9}')
 FSPF_KEY=$(cat conf/keytag | awk '{print $11}')
 FINGERPRINT="$FSPF_KEY|$FSPF_TAG|$MRENCLAVE"
-echo "Fingerprint: $FINGERPRINT" | tee fingerprint.txt
 
 # copy fspf.pb into app image
 case "$(uname -s)" in
-    Linux*)     sed "s@IMAGE_NAME@$IMAGE_NAME@" app-second-build-template.dockerfile > app-second-build.dockerfile;;
-    Darwin*)    sed -e "s@IMAGE_NAME@$IMAGE_NAME@" app-second-build-template.dockerfile > app-second-build.dockerfile;;
+    Linux*)     sed "s@IMAGE_NAME@$APP_NAME@" template.dockerfile > second-build.dockerfile;;
+    Darwin*)    sed -e "s@IMAGE_NAME@$APP_NAME@" template.dockerfile > second-build.dockerfile;;
 esac
 
-docker build -f app-second-build.dockerfile -t $IMAGE_NAME .
+docker build -f second-build.dockerfile -t $APP_NAME .
 
-rm -rf python
+echo "Fingerprint: $FINGERPRINT" | tee fingerprint.txt
+
+# clean
+rm second-build.dockerfile
 rm -rf conf
