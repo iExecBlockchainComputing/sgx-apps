@@ -6,7 +6,7 @@ docker build -f Dockerfile2 -t $IMAGE_NAME .
 
 MRENCLAVE=$(docker run --device=/dev/isgx -e SCONE_HEAP=1G -e SCONE_HASH=1 -e SCONE_ALPINE=1 nexus.iex.ec/python_scone python)
 
-docker run  -v "$PWD/python:/python" -v "$PWD/python/python3.6:/usr/lib/python3.6" -v "$PWD/conf:/conf" nexus.iex.ec/scone-cli sh -c \
+docker run  -v "$PWD/python:/python" -v "$PWD/app:/app" -v "$PWD/signer:/signer" -v "$PWD/python/python3.6:/usr/lib/python3.6" -v "$PWD/conf:/conf" nexus.iex.ec/scone-cli sh -c \
 "scone fspf create conf/fspf.pb; \
 scone fspf addr conf/fspf.pb /  --not-protected --kernel /; \
 scone fspf addr conf/fspf.pb /usr/lib/python3.6 --authenticated --kernel /usr/lib/python3.6; \
