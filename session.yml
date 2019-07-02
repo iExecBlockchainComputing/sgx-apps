@@ -1,0 +1,28 @@
+name: 9JK5UCejsIEvdPQ8qmhNOCgXL0aL146db
+digest: create
+
+
+services:
+   - name: app
+     image_name: image
+     mrenclaves: [2a94044a4e9621fe339bfd83d0df9f6d819926e09df8d377d72f9b7d0b25f732]
+     tags: [demo]
+     pwd: /
+     command: python /app/nilearn_test.py sgx
+     fspf_path: /fspf.pb
+     fspf_key: b79531813c520a42d28e2a6427bfd38f03cf07a6a949140f67fc42d4fbb51029
+     fspf_tag: 259fc89d9ba2d434c5bc1f9a04fb47df
+     env:
+             ENV=world
+images:
+   - name: image
+     mrenclaves: [2a94044a4e9621fe339bfd83d0df9f6d819926e09df8d377d72f9b7d0b25f732]
+     tags: [demo]
+     volumes:
+        - name: data
+          path: /iexec_in/data
+
+volumes:
+   - name: data
+     fspf_tag: ee391b24da7045b654ed6cdb1cbdae92
+     fspf_key: 37e262da6509a49b7c0ebf3ad7fdda163c8971d0b25906c7e2591389020d538e

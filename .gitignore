@@ -4,3 +4,5 @@ fingerprint.txt
 second-build.dockerfile
 python
 conf
+tee
+.tee-secrets
