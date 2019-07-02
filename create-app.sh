@@ -35,7 +35,7 @@ if [[ -z $DOCKERFILE ]]; then
 fi
 
 # build app with required dependencies and libs
-docker build -f "$APP_FOLDER/$DOCKERFILE" -t $APP_NAME ./$APP_FOLDER
+docker build -f "$APP_FOLDER/$DOCKERFILE" -t $APP_NAME $APP_FOLDER
 
 # get mrenclave of python interpreter
 MRENCLAVE=$(docker run \
@@ -45,7 +45,7 @@ MRENCLAVE=$(docker run \
                 -e SCONE_ALPINE=1 \
                 nexus.iex.ec/python_scone python)
 
-docker run --rm --entrypoint="" -v $PWD/python:/python $APP_NAME sh -c "cp -r /usr/lib/python3.6 /python;"
+docker run --rm --entrypoint="" -v $PWD/python:/python $APP_NAME sh -c "cp -r /usr/lib/python3.6 /python"
 
 # create fspf.pb
 docker run -e SCONE_MODE=sim \
