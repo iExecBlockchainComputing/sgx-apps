@@ -49,10 +49,10 @@ docker run --rm --entrypoint="" -v $PWD/python:/python $APP_NAME sh -c "cp -r /u
 
 # create fspf.pb
 docker run -e SCONE_MODE=sim \
-    -v $PWD/app:/app \
-    -v $PWD/signer:/signer \
-    -v $PWD/python/python3.6:/usr/lib/python3.6 \
-    -v $PWD/conf:/conf \
+    -v "$PWD/$APP_FOLDER/src:/app" \
+    -v "$PWD/signer:/signer" \
+    -v "$PWD/python/python3.6:/usr/lib/python3.6" \
+    -v "$PWD/conf:/conf" \
     nexus.iex.ec/scone-cli sh -c \
 "scone fspf create conf/fspf.pb; \
 scone fspf addr conf/fspf.pb /  --not-protected --kernel /; \
