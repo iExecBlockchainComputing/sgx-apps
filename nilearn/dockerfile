@@ -12,6 +12,6 @@ RUN SCONE_MODE=sim pip install cython scipy==1.2.0 scikit-learn nilearn matplotl
 
 RUN cp /usr/bin/python3.6 /usr/bin/python3
 
-COPY nilearn.py	/app/nilearn.py
+COPY src	/app
 
-ENTRYPOINT mkdir -p /iexec_in/data && unzip /iexec_in/$DATASET_FILENAME -d /iexec_in/data && python3 /app/nilearn.py sgx
+ENTRYPOINT unzip -o /iexec_in/$DATASET_FILENAME -d /iexec_in && python3 /app/nilearn.py sgx
