@@ -33,12 +33,22 @@ class DigestSigner:
             'signature':  self.signature.hex(),
         })
 
-def WriteEncryptedKey(symmetricKey):
-    print("Encrypting symmetric key")
+def GetPublicKey():
     try:
         key = open('/iexec_out/public.key', 'rb');
         pubKeyObj =  RSA.importKey(key.read())
         key.close()
+        return pubKeyObj
+    except:
+        if debug:
+            print('Error with opening key!')
+            traceback.print_exc()
+        key.close()
+        return None
+
+def WriteEncryptedKey(symmetricKey, pubKeyObj):
+    print("Encrypting symmetric key")
+    try:
         encryptor = PKCS1_OAEP.new(pubKeyObj)
         encrypted = encryptor.encrypt(symmetricKey)
         with open('/iexec_out/encrypted_key', 'wb+') as output:
@@ -117,14 +127,16 @@ def DecryptOutput(encryptedOutput, key, iv):
 
 def ZipOutput():
     zipf = zipfile.ZipFile(zippedOutputPath, 'a', zipfile.ZIP_DEFLATED)
-    os.chdir("/scone")
-    # ziph is zipfile handle
+
+    os.chdir(zipTargetDirectory)
+
     for root, dirs, files in os.walk('./'):
         for file in files:
-            if file == os.environ['taskid'] + '_result.zip':
+            if file == zipFileName:
                 continue
             print("Writing file " + file + " to zip archive.")
             zipf.write(os.path.join(root, file))
+
     zipf.close()
 
 def PadZippedOutput():
@@ -140,7 +152,7 @@ def PadZippedOutput():
         traceback.print_exc()
         print(ex)
 
-def EncryptZippedOutput():
+def EncryptZippedOutput(pubKeyObj):
     try:
         input = open(zippedOutputPath, 'rb')
         output = open('/iexec_out/result.zip.aes', 'wb+')
@@ -152,10 +164,11 @@ def EncryptZippedOutput():
 
         #generate AES key and encrypt it/write it on disk
         key = os.urandom(32)
-        WriteEncryptedKey(key)
+        WriteEncryptedKey(key, pubKeyObj)
 
         aes = AES.new(key, AES.MODE_CBC, iv)
         buffer_size = 8192
+
         #chunks = iter(lambda: input.read(buffer_size), '')
         result = input.read()
         #for chunk in chunks:
@@ -176,17 +189,18 @@ def WriteEnclaveSign():
             if not buf : break
             SHAhash.update(buf)
         input.close()
-        digest = '0x' + SHAhash.hexdigest()
+
+        digest     = '0x' + SHAhash.hexdigest()
         enclaveKey = os.environ['enclave_key']
-        taskid = os.environ['taskid']
-        worker = os.environ['worker']
-        result = DigestSigner(
+        taskid     = os.environ['taskid']
+        worker     = os.environ['worker']
+        result     = DigestSigner(
             enclaveKey = enclaveKey,
             worker     = worker,
             taskid     = taskid,
             digest     = digest,
         ).jsonify()
-        print(result)
+
         with open('/iexec_out/enclaveSig.iexec', 'w+') as outfile:
             outfile.write(result)
 
@@ -195,17 +209,33 @@ def WriteEnclaveSign():
         print(ex)
 
 if __name__ == '__main__':
-    #os.remove('iexec_out/result.zip')
-    if sys.argv[1] == "decrypt":
-        WriteEnclaveSign()
-        k=TestReadEncryptedKey()
-        TestEncryptedOutput(k)
-    elif sys.argv[1] == "test":
-        zippedOutputPath=sys.argv[2]
-        EncryptZippedOutput()
-    else:
-        zippedOutputPath = '/scone/' + os.environ['taskid'] + '_result.zip'
+    if sys.argv[1] == 'test':
+        zipTargetDirectory  = os.getcwd() + '/' + sys.argv[2]
+        zipFileName         = 'result.zip'
+        zippedOutputPath    = zipTargetDirectory + '/' + zipFileName
+
         ZipOutput()
         WriteEnclaveSign()
         PadZippedOutput()
         EncryptZippedOutput()
+
+        k=TestReadEncryptedKey()
+        TestEncryptedOutput(k)
+
+    else:
+        zipTargetDirectory  = '/scone'
+        zipFileName         = os.environ['taskid'] + '_result.zip'
+        zippedOutputPath    = zipTargetDirectory + '/' + zipFileName
+
+        ZipOutput()
+        WriteEnclaveSign()
+
+        #try to load the public key, if we can't we don't encrypt the results.
+        pubKeyObj = GetPublicKey()
+        if pubKeyObj is None:
+            if debug:
+                print("Public key couldn't be loaded, encryption aborted")
+            return
+
+        PadZippedOutput()
+        EncryptZippedOutput(pubKeyObj)
