@@ -1,0 +1,8 @@
+FROM iexechub/python-scone
+
+
+RUN cp /usr/bin/python3.6 /usr/bin/python3
+
+COPY random-generator.py /app/random-generator.py
+
+ENTRYPOINT python3 /app/random-generator.py

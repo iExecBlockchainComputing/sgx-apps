@@ -158,12 +158,12 @@ def EncryptZippedOutput(pubKeyObj):
         output = open('/iexec_out/result.zip.aes', 'wb+')
 
         #generate initalization vector for AES and prepend it to output
-        iv = os.urandom(16)
+        iv = os.getrandom(16)
         output.write(iv)
         WriteInitializationVector(iv)
 
         #generate AES key and encrypt it/write it on disk
-        key = os.urandom(32)
+        key = os.getrandom(32)
         WriteEncryptedKey(key, pubKeyObj)
 
         aes = AES.new(key, AES.MODE_CBC, iv)
