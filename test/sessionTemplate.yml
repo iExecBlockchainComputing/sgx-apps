@@ -1,0 +1,26 @@
+name: $SESSION_NAME
+digest: create
+
+services:
+   - name: app
+     image_name: image
+     mrenclaves: [$MRENCLAVE]
+     tags: [demo]
+     pwd: /
+     command: python /app/nilearn-test.py sgx
+     fspf_path: /fspf.pb
+     fspf_key: $FSPF_KEY
+     fspf_tag: $FSPF_TAG
+
+images:
+   - name: image
+     mrenclaves: [$MRENCLAVE]
+     tags: [demo]
+     volumes:
+        - name: data
+          path: /data
+
+volumes:
+   - name: data
+     fspf_tag: $DATA_FSPF_TAG
+     fspf_key: $DATA_FSPF_KEY

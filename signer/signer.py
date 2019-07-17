@@ -13,6 +13,7 @@ from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from web3.auto import w3
 from eth_account.messages import defunct_hash_message
+from shutil import copyfile
 
 keccak256 = w3.soliditySha3
 debug = True
@@ -36,15 +37,15 @@ class DigestSigner:
 def GetPublicKey():
     try:
         key = open('/iexec_out/public.key', 'rb');
-        pubKeyObj =  RSA.importKey(key.read())
-        key.close()
-        return pubKeyObj
+        pubKeyObj = RSA.importKey(key.read())
     except:
         if debug:
-            print('Error with opening key!')
+            print("Public key is not valid, couldn't import it!")
             traceback.print_exc()
-        key.close()
-        return None
+        pubKeyObj = None
+
+    key.close()
+    return pubKeyObj
 
 def WriteEncryptedKey(symmetricKey, pubKeyObj):
     print("Encrypting symmetric key")
@@ -233,9 +234,10 @@ if __name__ == '__main__':
         #try to load the public key, if we can't we don't encrypt the results.
         pubKeyObj = GetPublicKey()
         if pubKeyObj is None:
+            copyfile(zippedOutputPath, '/iexec_out/result.zip')
             if debug:
-                print("Public key couldn't be loaded, encryption aborted")
-            return
+                print("Public key couldn't be loaded, results won't be encrypted")
+            quit()
 
         PadZippedOutput()
         EncryptZippedOutput(pubKeyObj)
