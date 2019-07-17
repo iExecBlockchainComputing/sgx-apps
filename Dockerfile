@@ -6,7 +6,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.5/community" >> /etc/apk/repos
     && apk --no-cache --update-cache add gcc gfortran python python-dev py-pip build-base wget freetype-dev libpng-dev \
     && apk add --no-cache --virtual .build-deps gcc musl-dev
 
-
+##########ADD PYTHON PACKAGES HERE:#######################
 RUN SCONE_MODE=sim pip install attrdict python-gnupg web3
 
 RUN cp /usr/bin/python3.6 /usr/bin/python3
@@ -40,4 +40,5 @@ RUN SCONE_MODE=sim SCONE_HASH=1 SCONE_HEAP=1G SCONE_ALPINE=1		    \
 	&& printf "\n########################################################\nMREnclave: $FINGERPRINT\n########################################################\n\n"
 
 
-ENTRYPOINT python3 /app/app.py
+##########CHANGE ENTRYPOINT HERE:#######################
+ENTRYPOINT unzip -o /iexec_in/$DATASET_FILENAME -d /iexec_in && python3 /app/app.py
