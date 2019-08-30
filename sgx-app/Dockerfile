@@ -1,4 +1,4 @@
-FROM iexechub/python-scone
+FROM nexus.iex.ec/python-scone:1.0.1
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.5/community" >> /etc/apk/repositories \
     && apk update \
@@ -40,4 +40,10 @@ RUN SCONE_MODE=sim SCONE_HASH=1 SCONE_HEAP=1G SCONE_ALPINE=1		    \
 	&& printf "\n########################################################\nMREnclave: $FINGERPRINT\n########################################################\n\n"
 
 
-ENTRYPOINT unzip -o /iexec_in/$DATASET_FILENAME -d /iexec_in && python3 /app/app.py
+ENTRYPOINT unzip -o /iexec_in/$IEXEC_DATASET_FILENAME -d /iexec_in && python3 /app/app.py
+
+#docker image build -t nexus.iex.ec/sgx-app:it-1.0.1 .
+
+########################################################
+#MREnclave: 684075e1d075934cdfda68b0078f6577759c17c9185a24a43f47c961b32febfd|b3111d9c8c95cdb363858b49aede45bc|b84bc68bae8cdc8703ca4525b2cc16deffe9def4247498ebcc467830a67caf6d
+########################################################
