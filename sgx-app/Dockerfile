@@ -1,4 +1,4 @@
-FROM nexus.iex.ec/python-scone:1.0.1
+FROM nexus.iex.ec/python-scone:1.0.2
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.5/community" >> /etc/apk/repositories \
     && apk update \
@@ -47,3 +47,10 @@ ENTRYPOINT unzip -o /iexec_in/$IEXEC_DATASET_FILENAME -d /iexec_in && python3 /a
 ########################################################
 #MREnclave: 684075e1d075934cdfda68b0078f6577759c17c9185a24a43f47c961b32febfd|b3111d9c8c95cdb363858b49aede45bc|b84bc68bae8cdc8703ca4525b2cc16deffe9def4247498ebcc467830a67caf6d
 ########################################################
+
+#docker image build -t nexus.iex.ec/sgx-app:it-1.0.2 .
+
+########################################################
+#MREnclave: b3fd442e062225342e799d167ff2e88ef460a0890b76aa29d5fed8938d27cc8c|e7daba8433800a8d0fda8bb9012e1f14|4e6758e38f332d8eb718bc0037dbdedd00d3bb196dd3ff894938b32156179c38
+########################################################
+
