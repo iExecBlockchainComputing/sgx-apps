@@ -24,8 +24,8 @@ RUN SCONE_MODE=sim SCONE_HASH=1 SCONE_HEAP=1G SCONE_ALPINE=1		    \
 	&& scone fspf addf fspf.pb /bin /bin 			            \
 	&& scone fspf addr fspf.pb /lib --authenticated --kernel /lib       \
 	&& scone fspf addf fspf.pb /lib /lib 			            \
-	&& scone fspf addr fspf.pb /etc --authenticated --kernel /etc       \
-	&& scone fspf addf fspf.pb /etc /etc 			            \
+	&& find /etc -maxdepth 1 -not -name 'hosts' -not -name 'resolv.conf' -not -name 'hostname' -not -name 'etc' -not -name 'mtab' -print0 | xargs -t -n 1 -I {} scone fspf addr fspf.pb {} --authenticated --kernel {} \
+ 	&& find /etc -maxdepth 1 -not -name 'hosts' -not -name 'resolv.conf' -not -name 'hostname' -not -name 'etc' -not -name 'mtab' -print0 | xargs -t -n 1 -I {} scone fspf addf fspf.pb {} {} \
 	&& scone fspf addr fspf.pb /sbin --authenticated --kernel /sbin     \
 	&& scone fspf addf fspf.pb /sbin /sbin 			            \
 	&& scone fspf addr fspf.pb /signer --authenticated --kernel /signer \
