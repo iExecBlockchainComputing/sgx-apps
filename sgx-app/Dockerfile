@@ -1,4 +1,4 @@
-FROM nexus.iex.ec/python-scone:1.0.2
+FROM iexechub/python-scone
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.5/community" >> /etc/apk/repositories \
     && apk update \
