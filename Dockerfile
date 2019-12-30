@@ -13,6 +13,9 @@ RUN cp /usr/bin/python3.6 /usr/bin/python3
 
 COPY src /app
 
+# /etc/hosts and /etc/resolv.conf are modifed by docker during container startup
+# This means that we should not include them into fspf database
+
 RUN SCONE_MODE=sim SCONE_HASH=1 SCONE_HEAP=1G SCONE_ALPINE=1		    \
 	&& mkdir conf							    \
 	&& scone fspf create fspf.pb 					    \
@@ -23,8 +26,8 @@ RUN SCONE_MODE=sim SCONE_HASH=1 SCONE_HEAP=1G SCONE_ALPINE=1		    \
 	&& scone fspf addf fspf.pb /bin /bin 			            \
 	&& scone fspf addr fspf.pb /lib --authenticated --kernel /lib       \
 	&& scone fspf addf fspf.pb /lib /lib 			            \
-	&& scone fspf addr fspf.pb /etc --authenticated --kernel /etc       \
-	&& scone fspf addf fspf.pb /etc /etc 			            \
+	&& find /etc -maxdepth 1 -not -name 'hosts' -not -name 'resolv.conf' -not -name 'hostname' -not -name 'etc' -not -name 'mtab' -print0 | xargs -t -n 1 -I {} scone fspf addr fspf.pb {} --authenticated --kernel {} \
+ 	&& find /etc -maxdepth 1 -not -name 'hosts' -not -name 'resolv.conf' -not -name 'hostname' -not -name 'etc' -not -name 'mtab' -print0 | xargs -t -n 1 -I {} scone fspf addf fspf.pb {} {} \
 	&& scone fspf addr fspf.pb /sbin --authenticated --kernel /sbin     \
 	&& scone fspf addf fspf.pb /sbin /sbin 			            \
 	&& scone fspf addr fspf.pb /signer --authenticated --kernel /signer \
