@@ -16,7 +16,7 @@ with open("/iexec_in/dataset.txt", "r") as fin:
 
        fout.write(resultTxt)
        print(resultTxt)
-       
+
 
 # touch 'completed-compute.iexec' file at end of compute
 open('/scone/iexec_out/completed-compute.iexec', 'a').close()
