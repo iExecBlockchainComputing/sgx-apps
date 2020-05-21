@@ -4,7 +4,7 @@ import json
 print("Started compute tee-hello-with-dataset")
 
 iexec_out = os.environ['IEXEC_OUT']
-dataset_file = iexec_out + '/dataset.txt'
+dataset_file = os.environ['IEXEC_IN'] + '/dataset.txt'
 result_file = iexec_out + '/result.txt'
 computed_json_file = iexec_out + '/computed.json'
 
