@@ -1,30 +1,35 @@
 import os
 import sys
-from web3.auto import w3
+import json
 
-keccak256 = w3.soliditySha3
 
 print("Started compute tee-hello-with-callback")
 
-dir = os.path.join("/scone/iexec_out")
-if not os.path.exists(dir):
-    os.mkdir(dir)
+iexec_out = os.environ['IEXEC_OUT']
+computed_dot_json = iexec_out + '/computed.json'
 
-IEXEC = '\n _\n(_)\n _  _____  _____  ___\n| |/ _ \ \/ / _ \/ __|\n| |  __/>  <  __/ (__\n|_|\___/_/\_\___|\___|'
+iexec_out_dir = os.path.join(iexec_out)
+if not os.path.exists(iexec_out_dir):
+    os.mkdir(iexec_out_dir)
+
+IEXEC = '''
+  _ _____
+ (_) ____|_  _____  ___ 
+ | |  _| \ \/ / _ \/ __|
+ | | |___ >  <  __/ (__ 
+ |_|_____/_/\_\___|\___|
+
+'''
 
 hexChar = "a"
 
 if len(sys.argv) > 1:
     hexChar = sys.argv[1]
+callback_data = '0x000000000000000000000000000000000000000000000000000000000000000{}'.format(hexChar)
 
-with open("/scone/iexec_out/callback.iexec", "w+") as fout:
-   callback = '0x000000000000000000000000000000000000000000000000000000000000000{}'.format(hexChar)
-   fout.write(callback)
-   print('Callback: {} (written to callback.iexec)'.format(callback))
-   digest = keccak256([ 'bytes' ], [ callback ]).hex()
-   print('Digest: {} (not written, but should match reveal `resultDigest`)'.format(digest))
-
-# touch 'completed-compute.iexec' file at end of compute
-open('/scone/iexec_out/completed-compute.iexec', 'a').close()
+with open(computed_dot_json, 'w+') as fout:
+    computed_json = { "callback-data" : callback_data}
+    json.dump(computed_json, fout)
+    print(computed_json)
 
 print("Ended compute tee-hello-with-callback")
