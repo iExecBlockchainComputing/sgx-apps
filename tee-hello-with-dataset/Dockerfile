@@ -28,4 +28,4 @@ RUN rm /protect-fs.sh /keytag
 
 ENTRYPOINT /entrypoint.sh
 
-#docker image build -t nexus.iex.ec/tee-hello-with-dataset:1.1.1 .
+#docker image build -t nexus.iex.ec/tee-hello-with-dataset:3.0.0 .
