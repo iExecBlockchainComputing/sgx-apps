@@ -28,4 +28,4 @@ RUN rm /protect-fs.sh /keytag
 
 ENTRYPOINT /entrypoint.sh
 
-#docker image build -t nexus.iex.ec/tee-hello-with-callback:1.2.0 .
+# docker image build -t nexus.iex.ec/tee-hello-with-callback:3.0.0 .
