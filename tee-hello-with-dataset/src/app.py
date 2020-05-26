@@ -1,24 +1,36 @@
 import os
+import json
 
 print("Started compute tee-hello-with-dataset")
 
-dir = os.path.join("/scone/iexec_out")
-if not os.path.exists(dir):
-    os.mkdir(dir)
+iexec_out = os.environ['IEXEC_OUT']
+dataset_file = os.environ['IEXEC_IN'] + '/dataset.txt'
+result_file = iexec_out + '/result.txt'
+computed_json_file = iexec_out + '/computed.json'
 
-IEXEC = '\n _\n(_)\n _  _____  _____  ___\n| |/ _ \ \/ / _ \/ __|\n| |  __/>  <  __/ (__\n|_|\___/_/\_\___|\___|'
+iexec_out_dir = os.path.join(iexec_out)
+if not os.path.exists(iexec_out_dir):
+    os.makedirs(iexec_out_dir)
 
-with open("/iexec_in/dataset.txt", "r") as fin:
-   with open("/scone/iexec_out/result.txt", "w+") as fout:
+IEXEC = '''
+  _ _____
+ (_) ____|_  _____  ___ 
+ | |  _| \ \/ / _ \/ __|
+ | | |___ >  <  __/ (__ 
+ |_|_____/_/\_\___|\___|
 
-       datasetContent = fin.read()
-       resultTxt = IEXEC + ' hello from an enclave' + "\n" + 'dataset content: ' + datasetContent
+'''
 
-       fout.write(resultTxt)
-       print(resultTxt)
+with open(dataset_file, 'r') as fin:
+   with open(result_file, "w+") as fout:
+        dataset_content = fin.read()
+        result_txt = IEXEC + ' Hello from an enclave' + "\n" + 'dataset content: ' + dataset_content
+        fout.write(result_txt)
+        print(result_txt)
 
-
-# touch 'completed-compute.iexec' file at end of compute
-open('/scone/iexec_out/completed-compute.iexec', 'a').close()
+with open(computed_json_file, 'w+') as f:
+    computed_json = { "deterministic-output-path" : result_file }
+    json.dump(computed_json, f)
+    print(computed_json)
 
 print("Ended compute tee-hello-with-dataset")

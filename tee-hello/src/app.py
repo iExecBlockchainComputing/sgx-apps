@@ -1,30 +1,38 @@
 import os
 import sys
+import json
 
-print("Started compute tee-hello")
+print('Started compute tee-hello')
 
-PROTECTED_IEXEC_OUT = "/scone/iexec_out";
+iexec_out = os.environ['IEXEC_OUT']
+result_file = iexec_out + '/result.txt'
+computed_json_file = iexec_out + '/computed.json'
 
-dir = os.path.join(PROTECTED_IEXEC_OUT)
-if not os.path.exists(dir):
-    os.mkdir(dir)
+iexec_out_dir = os.path.join(iexec_out)
+if not os.path.exists(iexec_out_dir):
+    os.makedirs(iexec_out_dir)
 
-IEXEC = ' _\n(_)\n _  _____  _____  ___\n| |/ _ \ \/ / _ \/ __|\n| |  __/>  <  __/ (__\n|_|\___/_/\_\___|\___|\n\n'
+IEXEC = '''
+  _ _____
+ (_) ____|_  _____  ___ 
+ | |  _| \ \/ / _ \/ __|
+ | | |___ >  <  __/ (__ 
+ |_|_____/_/\_\___|\___|
 
-with open(PROTECTED_IEXEC_OUT + "/result.txt", "w+") as fout:
+'''
 
-    name = "you"
+name = "you"
+if len(sys.argv) > 1:
+    name = sys.argv[1]
 
-    if len(sys.argv) > 1:
-        name = sys.argv[1]
+with open(result_file, 'w+') as fout:
+    result_txt = IEXEC + 'Hello from an enclave ' + name + '\n'
+    fout.write(result_txt)
+    print(result_txt)
 
-    resultTxt = IEXEC + "hello from an enclave " + name + "\n"
+with open(computed_json_file, 'w+') as f:
+    computed_json = { "deterministic-output-path" : result_file }
+    json.dump(computed_json, f)
+    print(computed_json)
 
-    fout.write(resultTxt)
-    print(resultTxt)
-
-
-# touch 'completed-compute.iexec' file at end of compute
-open(PROTECTED_IEXEC_OUT + '/completed-compute.iexec', 'a').close()
-
-print("Ended compute tee-hello")
+print('Ended compute tee-hello')
