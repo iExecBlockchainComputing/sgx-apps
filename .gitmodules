@@ -1,6 +1,0 @@
-[submodule "scone-hello-world-app"]
-	path = scone-hello-world-app
-	url = https://github.com/iExecBlockchainComputing/scone-hello-world-app.git
-[submodule "scone-hello-world-app-with-dataset"]
-	path = scone-hello-world-app-with-dataset
-	url = https://github.com/iExecBlockchainComputing/scone-hello-world-app-with-dataset.git
